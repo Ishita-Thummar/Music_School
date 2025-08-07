@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React from "react";
 import {
   motion,
   useAnimationFrame,
@@ -7,28 +7,8 @@ import {
   useMotionValue,
   useTransform,
 } from "framer-motion";
+import { useRef } from "react";
 import { cn } from "@/utils/cn";
-
-// Helper to generate rounded rectangle path
-function roundedRectPath(
-  width: number,
-  height: number,
-  rx: number,
-  ry: number
-) {
-  return `
-    M${rx},0
-    H${width - rx}
-    A${rx},${ry} 0 0 1 ${width},${ry}
-    V${height - ry}
-    A${rx},${ry} 0 0 1 ${width - rx},${height}
-    H${rx}
-    A${rx},${ry} 0 0 1 0,${height - ry}
-    V${ry}
-    A${rx},${ry} 0 0 1 ${rx},0
-    Z
-  `;
-}
 
 export function Button({
   borderRadius = "1.75rem",
@@ -52,7 +32,7 @@ export function Button({
   return (
     <Component
       className={cn(
-        "bg-transparent relative text-xl h-16 w-40 p-[1px] overflow-hidden",
+        "bg-transparent relative text-xl  h-16 w-40 p-[1px] overflow-hidden ",
         containerClassName
       )}
       style={{
@@ -64,7 +44,7 @@ export function Button({
         className="absolute inset-0"
         style={{ borderRadius: `calc(${borderRadius} * 0.96)` }}
       >
-        <MovingBorder duration={duration} rx="30" ry="30">
+        <MovingBorder duration={duration} rx="30%" ry="30%">
           <div
             className={cn(
               "h-20 w-20 opacity-[0.8] bg-[radial-gradient(var(--sky-500)_40%,transparent_60%)]",
@@ -92,8 +72,8 @@ export function Button({
 export const MovingBorder = ({
   children,
   duration = 2000,
-  rx = "30",
-  ry = "30",
+  rx,
+  ry,
   ...otherProps
 }: {
   children: React.ReactNode;
@@ -102,7 +82,7 @@ export const MovingBorder = ({
   ry?: string;
   [key: string]: any;
 }) => {
-  const pathRef = useRef<SVGPathElement | null>(null);
+  const pathRef = useRef<any>(0);
   const progress = useMotionValue<number>(0);
 
   useAnimationFrame((time) => {
@@ -115,11 +95,11 @@ export const MovingBorder = ({
 
   const x = useTransform(
     progress,
-    (val) => pathRef.current?.getPointAtLength(val)?.x ?? 0
+    (val) => pathRef.current?.getPointAtLength(val).x
   );
   const y = useTransform(
     progress,
-    (val) => pathRef.current?.getPointAtLength(val)?.y ?? 0
+    (val) => pathRef.current?.getPointAtLength(val).y
   );
 
   const transform = useMotionTemplate`translateX(${x}px) translateY(${y}px) translateX(-50%) translateY(-50%)`;
@@ -132,13 +112,15 @@ export const MovingBorder = ({
         className="absolute h-full w-full"
         width="100%"
         height="100%"
-        viewBox="0 0 100 100"
         {...otherProps}
       >
-        <path
-          ref={pathRef}
+        <rect
           fill="none"
-          d={roundedRectPath(100, 100, parseFloat(rx), parseFloat(ry))}
+          width="100%"
+          height="100%"
+          rx={rx}
+          ry={ry}
+          ref={pathRef}
         />
       </svg>
       <motion.div
