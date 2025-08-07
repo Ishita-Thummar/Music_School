@@ -9,7 +9,7 @@ import {
 } from "framer-motion";
 import { cn } from "@/utils/cn";
 
-// 🧠 Helper to generate rounded rectangle path
+// Helper to generate rounded rectangle path
 function roundedRectPath(
   width: number,
   height: number,
